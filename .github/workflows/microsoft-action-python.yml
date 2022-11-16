@@ -1,6 +1,5 @@
 - name: Python Actions Collection
   uses: microsoft/action-python@0.2.0
-
 inputs:
   black:
     description: |
