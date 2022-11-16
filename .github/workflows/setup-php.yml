@@ -1,0 +1,342 @@
+- name: Setup PHP Action
+  uses: shivammathur/setup-php@2.22.0
+
+- name: Setup PHP with PECL extension
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    extensions: imagick, swoole
+
+- name: Setup PHP with specific version of PECL extension
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '5.4'
+    extensions: swoole-1.9.3
+
+- name: Setup PHP with pre-release PECL extension
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    extensions: xdebug-beta
+
+- name: Setup PHP with intl
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    extensions: intl-70.1
+
+- name: Setup PHP with tools
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    tools: php-cs-fixer, phpunit
+
+- name: Setup PHP with tools
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    tools: vimeo/psalm
+
+- name: Setup PHP with tools
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    tools: php-cs-fixer:3.5, phpunit:9.5
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+- name: Setup PHP with composer v2
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    tools: composer:v2
+
+- name: Setup PHP with Xdebug
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    coverage: xdebug
+
+- name: Setup PHP with Xdebug 2.x
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '7.4'
+    coverage: xdebug2
+
+- name: Setup PHP with PCOV
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    ini-values: pcov.directory=api #optional, see above for usage.
+    coverage: pcov
+
+- name: Setup PCOV
+  run: |
+    composer require pcov/clobber
+    vendor/bin/pcov clobber
+
+- name: Setup PHP
+  id: setup-php
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+
+- name: Print PHP version
+  run: echo ${{ steps.setup-php.outputs.php-version }}
+
+steps:
+- name: Setup PHP
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    extensions: mbstring, intl
+    ini-values: post_max_size=256M, max_execution_time=180
+    coverage: xdebug
+    tools: php-cs-fixer, phpunit
+
+jobs:
+  run:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        php-versions: ['7.4', '8.0', '8.1']
+        phpunit-versions: ['latest']
+        include:
+        - operating-system: 'ubuntu-latest'
+          php-versions: '7.2'
+          phpunit-versions: '8.5.21'
+    steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: mbstring, intl
+        ini-values: post_max_size=256M, max_execution_time=180
+        coverage: xdebug
+        tools: php-cs-fixer, phpunit:${{ matrix.phpunit-versions }}
+
+steps:
+- name: Setup nightly PHP
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.2'
+    extensions: mbstring
+    ini-values: post_max_size=256M, max_execution_time=180
+    coverage: xdebug
+    tools: php-cs-fixer, phpunit
+
+steps:
+- name: Setup PHP with debugging symbols
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+  env:
+    debug: true # specify true or false
+
+jobs:
+  run:
+    runs-on: windows-latest
+    name: Setup PHP TS on Windows
+    steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+      env:
+        phpts: ts # specify ts or nts
+
+- name: Setup PHP with latest versions
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+  env:
+    update: true # specify true or false
+
+- name: Setup PHP with logs
+  uses: shivammathur/setup-php@verbose
+  with:
+    php-version: '8.1'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    container: shivammathur/node:latest-${{ matrix.arch }}
+    strategy:
+      matrix:
+        arch: ["amd64", "i386"]
+    steps:
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+jobs:
+  run:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        php-versions: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
+    name: PHP ${{ matrix.php-versions }}
+    steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+      env:
+        runner: self-hosted
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+# For runs-on: ubuntu-latest
+act -P ubuntu-latest=shivammathur/node:latest
+
+# For runs-on: ubuntu-22.04
+act -P ubuntu-22.04=shivammathur/node:2204
+
+# For runs-on: ubuntu-20.04
+act -P ubuntu-20.04=shivammathur/node:2004
+
+# For runs-on: ubuntu-18.04
+act -P ubuntu-18.04=shivammathur/node:1804
+
+- name: Setup PHP with JIT in tracing mode
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    coverage: none
+    ini-values: opcache.enable_cli=1, opcache.jit=tracing, opcache.jit_buffer_size=64M
+
+- name: Get composer cache directory
+  id: composer-cache
+  run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+- name: Cache dependencies
+  uses: actions/cache@v2
+  with:
+    path: ${{ steps.composer-cache.outputs.dir }}
+    key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+    restore-keys: ${{ runner.os }}-composer-
+
+- name: Install dependencies
+  run: composer install --prefer-dist
+
+key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+
+key: ${{ runner.os }}-composer-${{ matrix.prefer }}-${{ hashFiles('**/composer.lock') }}
+restore-keys: ${{ runner.os }}-composer-${{ matrix.prefer }}-
+
+- name: Setup PHP
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+- name: Setup PHP
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+  env:
+    PACKAGIST_TOKEN: ${{ secrets.PACKAGIST_TOKEN }}
+
+- name: Setup PHP
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+  env:
+    COMPOSER_AUTH_JSON: |
+      {
+        "http-basic": {
+          "example.org": {
+            "username": "${{ secrets.EXAMPLE_ORG_USERNAME }}",
+            "password": "${{ secrets.EXAMPLE_ORG_PASSWORD }}"
+          }
+        }
+      }
+
+- name: Setup PHP
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+
+- name: Run PHP code
+  shell: php {0}
+  run: |
+    <?php
+    $welcome = "Hello, world";
+    echo $welcome;
+
+- name: Setup problem matchers for PHP
+  run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+- name: Setup problem matchers for PHPUnit
+  run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+- name: Setup PHP
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    tools: phpstan
+
+- name: Run PHPStan
+  run: phpstan analyse src
+
+- name: Setup PHP
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    tools: psalm
+
+- name: Run Psalm
+  run: psalm --output-format=github
+
+- name: Setup PHP
+  uses: shivammathur/setup-php@v2
+  with:
+    php-version: '8.1'
+    tools: cs2pr, phpcs
+
+- name: Run phpcs
+  run: phpcs -q --report=checkstyle src | cs2pr
+
+name: 'Setup PHP Action'
+author: shivammathur
+description: 'GitHub Action for PHP'
+branding:
+  color: 'purple'
+  icon: 'play-circle'
+inputs:
+  php-version:
+    description: 'Setup PHP version.'
+    default: '8.1'
+    required: true
+  extensions: true
+    description: 'Setup PHP extensions.'
+    required: false
+  ini-file:
+    description: 'Set base ini file.'
+    default: 'production'
+    required: false
+  ini-values:
+    description: 'Add values to php.ini.'
+    required: false
+  coverage:  true
+    description: 'Setup code coverage driver.'
+    required: false
+  tools: true
+    description: 'Setup popular tools globally.'
+    required: false
+outputs:
+  php-version:
+    description: 'PHP version in semver format'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
