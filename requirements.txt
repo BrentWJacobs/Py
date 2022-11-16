@@ -93,7 +93,6 @@ tokenizers
 numpy
 regex
 grpcio
-tensorboard>=1.15.0
 pyarrow
 pandas
 tensorboard
@@ -103,7 +102,6 @@ visualdl
 opencv-python
 paddlenlp
 paddle2onnx
-dill>=0.3.6
 dill
 aiohttp
 scikit-learn
